@@ -6,13 +6,86 @@ This Python package extracts different metrics of an API and save this stadistic
 - URL API to request.
 
 #### Output:
-- JSON file showed in the next JSON schema.
+- JSON file called: metrics_api_v.json follows the next JSON schema. Showed only the first item.
 
 ```
-schema := {
-  #name -> JSONSchema string.
-  #dateAndTime -> (JSONSchema stringWithFormat: 'date-time').
-  #numberOfPets -> JSONSchema number } asJSONSchema.
+metrics_api_v.json = {
+  'time_of_execution' : type="string",
+  'bioschemas_ssl_https_license' : [
+                                        {
+                                                "university": {
+                                                        "bioschemas": [
+                                                        type="integer",
+                                                        type="integer"
+                                                        ],
+                                                        "ssl": [
+                                                        type="integer",
+                                                        type="integer"                               
+                                                        ],
+                                                        "license": [
+                                                        type="integer",
+                                                        type="integer"
+                                                        ],
+                                                        "https": [
+                                                        type="integer",
+                                                        type="integer"
+                                                        ]
+                                                }
+                                                },
+                                ...
+  ],
+  'http_codes_by_classification' : [
+                                        {
+                                        "university": {
+                                                "200": type="integer",
+                                                "301": type="integer",
+                                                "408": type="integer",
+                                                "205": type="integer"
+                                        }
+                                        },
+                                ...
+  ],
+  'domains_classification' : [
+                                {
+                                "university": [
+                                        type="string",
+                                        type="string",
+                                        type="string",
+                                        type="string",
+                                        type="string"
+                                ]
+                                },
+                                ...
+  ],
+  "domains_count" : [
+                                {"Domain" : [
+                                type="string",
+                                ...
+                                ]
+                                },
+                                {"Count" : [
+                                type="integer"   
+                                ...
+                        ]
+
+  ],
+  "problematic_urls" : [
+                                {"first_url_tool" : type="string",
+                                "name" : type="string",
+                                "id" : type="string",
+                                }
+                                ...
+  ],
+  "tools_list_unique" : [
+                                {"first_url_tool" : type="string",
+                                "name" : type="string"/type="list",
+                                "id" : type="string"/type="list",
+                                }         
+                                ...
+  ]
+
+}
+
 
 ```
 
@@ -36,7 +109,7 @@ schema := {
 
 ## Build with:
 - [Pandas](https://pandas.pydata.org/docs/) - is an opensource, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.
-
+- [Requests](https://pandas.pydata.org/docs/) - is an opensource, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.
 <br />
 
 
