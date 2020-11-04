@@ -9,7 +9,6 @@ from json_writer import JSON_writer
 from constants import CLASSIFICATION_DOMAINS
 from utils import create_df_from_dict, extract_columns_df
 
-from utils import open_json
 
 if __name__ == "__main__":
 
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     except:
         logging.error("The URL is given is not available in this moment. Try again in a few minutes again")
         sys.exit()
-        
+
     # Instance the object to calculate the differents metrics:
     api_extractor_obj = Api_V_Extractor(data,
                                         CLASSIFICATION_DOMAINS)
@@ -85,6 +84,7 @@ if __name__ == "__main__":
     #Extract the different http codes from.
     final_http_codes_to_save = [{list(api_extractor_obj.domain_classification[i].keys())[0]: k} for i, k in enumerate(api_extractor_obj.values_codes)]
 
+    #Instance of the JSON writer object
     json_writer_obj = JSON_writer(f"{args.output_directory}/{args.output_file_name_metrics}",
                                     time_of_execution = str(datetime.now()),
                                     bioschemas_ssl_https_license = bioschemas_ssl_https_to_save,
