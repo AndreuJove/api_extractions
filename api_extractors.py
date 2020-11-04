@@ -2,7 +2,12 @@ from operator import getitem
 from functools import  reduce
 import json
 
-class Api_Vicky_Extractor:
+
+class Api_V_Extractor:
+    """
+    Class for extracting different metrics of the api
+
+    """
     def __init__(self, json, domain_classification):
         self.json = json
         self.domain_classification = domain_classification
@@ -14,19 +19,23 @@ class Api_Vicky_Extractor:
         self.path_to_http_codes = ['metrics', 'project', 'website', 'operational']
         self.path_to_website = ['metrics', 'project', 'website']
         self.acces_metrics_path = ['bioschemas', 'ssl', 'license', 'https']
+        
 
     """
     Extract the value inside of a json file given a path to the value
     """
     @staticmethod
     def get_atribute_from_item_with_path(array_path_to_value, item):
+        #Return the item from a given path insite of dictionaries, arrays.
         return reduce(getitem, array_path_to_value, item)
 
     @staticmethod
     def get_domain(url):
+        #Returns the domain from a url given
         return url.lower().split("://")[-1].split("/")[0].replace("www.", "")
     
     def iterate_in_json(self):
+        #Iterates in the array of the class
         for tool in self.json:
             url = self.get_atribute_from_item_with_path(["entities", 0, 'tools', 0, "web", "homepage"], tool)
             domain = self.get_domain(url)
@@ -110,8 +119,6 @@ class Api_Vicky_Extractor:
                 self.total_dict_domains_counter[domain] += 1
             else:
                 self.total_dict_domains_counter[domain] = 1
-        
-
 
 
 

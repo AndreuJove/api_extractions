@@ -1,133 +1,97 @@
-import json
-import time
 import os
-import requests
-import argparse
-from utils import*
-import api_extractors
 import sys
+import logging
+import argparse
+from datetime import datetime
+import requests
+from api_extractors import Api_V_Extractor
+from json_writer import JSON_writer
+from constants import CLASSIFICATION_DOMAINS
+from utils import create_df_from_dict, extract_columns_df
 
+from utils import open_json
 
 if __name__ == "__main__":
 
     # Instance of the class ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Bioinformatics tools API extraction")
+    parser = argparse.ArgumentParser(description="Python project to extract and analyse data from a bioinformatics API")
 
     # Add the argument of URL of the api to extract the data:
-    parser.add_argument('-i', '--url', type=str, default="https://dev-openebench.bsc.es/monitor/rest/edam/aggregate?projection=description&projection=web&name=&label=null",
-                        help="URL API for extraction")
+    parser.add_argument('-input_url',
+                        type=str,
+                        default="https://dev-openebench.bsc.es/monitor/rest/edam/aggregate?projection=description&projection=web&name=&label=null",
+                        help="The input API url for the extraction of data. The default value is: https://dev-openebench.bsc.es/monitor/rest/edam/aggregate?projection=description&projection=web&name=&label=null"
+                        )
 
     # Add the argument of the number of the most common domains to extract. The default is 36:
-    parser.add_argument('-o_n_domains', '--number_of_domains',
-                        type=int, default=36, help="Number of domains to extract")
+    parser.add_argument('-number_domains',
+                        type=int,
+                        default=36,
+                        help="Number of domains to extract, the default number is 36 domains."
+                        )
 
     # Add the argument of output's directory name where the output files will be saved:
-    parser.add_argument('-o_directory', '--output_directory', type=str,
-                    default="output_data", help="Name of the directory for the outputs files")
+    parser.add_argument('-output_directory',
+                        type=str,
+                        default="output_data",
+                        help="Name of the directory for the outputs files"
+                        )
 
-    # Add the argument of output's filename of the file of the list of tools with unique URL:
-    parser.add_argument('-o_tools_unique_url', '--tools_unique_url', type=str,
-                    default="tools_unique_url", help="File name for the tools with unique url")
-
-    # Add the argument of output filename of the list of problematic tools for crawling in the API:
-    parser.add_argument('-o_problematic_tools', '--problematic_tools', type=str,
-                default="problematic_tools", help="File name for the problematic tools")
-    
-    # Add the argument of output filename of the extraced metrics: bioschemas, ssl, https and license resulted from the API.
-    parser.add_argument('-o_bio_ssl_https', '--bioschemas_ssl_https_license', type=str,
-                default="bioschemas_ssl_https_license_by_classification", help="File name of the extracted metrics: bioschemas, ssl, https and license")
-
-    # Add the argument of output filename of the extraced http codes of the API.
-    parser.add_argument('-o_https_codes', '--http_codes', type=str,
-                default="http_codes_by_classification", help="File name of the https codes received for the different domains")
-
-    # Add the argument of output filename of the primary classification about domains.
-    parser.add_argument('-o_classification', '--primary_classification', type=str,
-                default="primary_classification_domains", help="Primary classification of the domains in Universities, Tools Collections, Life Sciences, Generic and Institutions")
-
-    # Add the argument of output filename of the primary classification about domains.
-    parser.add_argument('-o_count_domains', '--count_domains', type=str,
-                default="count_domains_tools_unique_url", help="The final count of the domains of tools with unique URL")
+    # Add the argument of output's directory name where the output files will be saved:
+    parser.add_argument('-output_file_name_metrics',
+                        type=str,
+                        default="metrics_api_v",
+                        help="Name of the output file of the system"
+                        )
 
     args = parser.parse_args()
 
     if not os.path.isdir(args.output_directory):
         os.mkdir(args.output_directory)
 
-    start = time.time()
+    #Create the logger:
+    logging.basicConfig(format='%(levelname)s: %(message)s (%(asctime)s)', level=logging.INFO)
 
-    # Primary classification of domains, can be change it in the future.
-    UNIVERSITY = ['ncbi.nlm.nih.gov', 'ebi.ac.uk',
-                  'broadinstitute.org', 'csbio.sjtu.edu.cn', 'dna.leeds.ac.uk']
-    INSTITUTIONAL = ['cbs.dtu.dk', 'galaxy.pasteur.fr', 'bioinformatics.psb.ugent.be', 'zhanglab.ccmb.med.umich.edu', 'jci-bioinfo.cn',
-                     'sanger.ac.uk', 'protein.bio.unipd.it',  'imgt.org', 'genius.embnet.dkfz-heidelberg.de',
-                     'bioinformatics.psb.ugent.be', 'ccb.jhu.edu', 'tools.proteomecenter.org', 'genome.sph.umich.edu']
-    LIFESCIENCE = ['bioconductor.org', 'emboss.open-bio.org']
-    COLLECTIONS = ['bioinformatics.org', 'ms-utils.org', 'web.expasy.org']
-    GENERIC = ['github.com', 'cran.r-project.org', 'doi.org', 'imtech.res.in', 'pypi.python.org',
-               'sourceforge.net', 'sites.google.com', 'metacpan.org', 'gitlab.com', 'code.google.com', 'bitbucket.org']
-
-    # Create list of dictionaries to save in json format:
-    primary_classifcation_domains = [
-        {'university': UNIVERSITY},
-        {'institucional': INSTITUTIONAL},
-        {'lifeScience': LIFESCIENCE},
-        {'collections': COLLECTIONS},
-        {'generic': GENERIC},
-        {'others': []},
-        {'total': []}
-    ]
-
-
-    # Request to the api and convert to a list of dictionaries to operate with python and catch if it is not available.
+    #Request to the api and convert to a list of dictionaries to operate with python and catch if it is not available.
     try:
-        with requests.get(args.url, stream=True) as r:
+        logging.info("Starting the request. This might take few seconds")
+        with requests.get(args.input_url, stream=True) as r:
             data = r.json()
     except:
-        print("The URL given is not available in this moment")
+        logging.error("The URL is given is not available in this moment. Try again in a few minutes again")
         sys.exit()
-
+        
     # Instance the object to calculate the differents metrics:
-    api_extractor_obj = api_extractors.Api_Vicky_Extractor(
-        data, primary_classifcation_domains)
+    api_extractor_obj = Api_V_Extractor(data,
+                                        CLASSIFICATION_DOMAINS)
     # Run the specific methods:
+    logging.info("Starting the calculus of metrics from the API. This might take some seconds")
     api_extractor_obj.iterate_in_json()
     api_extractor_obj.counter_domains_of_list_unique()
 
+    logging.info("Extraction of the stadistics done succesfully")
     # Create Dataframe of the counter of domains
-    df = create_dataframe_from_dict_and_give_length(
-        api_extractor_obj.total_dict_domains_counter, "Domain", "Count", args.number_of_domains)
+    df = create_df_from_dict(api_extractor_obj.total_dict_domains_counter,
+                                                    "Domain",
+                                                    "Count",
+                                                    args.number_domains)
+
     # Extract as a list the columns of the dataframe and return list of dictionaries to save in json:
-    count_of_most_popular_domains = get_lists_of_dictionaries_of_dataframe_columns(
-        df)
+    count_of_most_popular_domains = extract_columns_df(df)
 
-    # Safe tools lists for scrapy crawler in json format:
-    write_json_file(api_extractor_obj.tools_list_unique_url,
-                    f'{args.output_directory}/{args.tools_unique_url}.json')
+    # Extract bioschemas, ssl, https, and license from the object by the classification domains.
+    bioschemas_ssl_https_to_save = [dict([(list(api_extractor_obj.domain_classification[i].keys())[0], dict([(api_extractor_obj.acces_metrics_path[j], it) for j, it in enumerate(v)]))]) for i, v in enumerate(api_extractor_obj.values_bioschemas_ssl_liscense_https)]
 
-    # Safe problematic tools for scrapy crawler in json format:
-    write_json_file(api_extractor_obj.problematic_url,
-                    f'{args.output_directory}/{args.problematic_tools}.json')
-    # Distribute the values of bioschemas, ssl, https in a comprensive format and save to json file:
-    final_value_metrics_bioschemas_ssl_https_to_save = [dict([(list(api_extractor_obj.domain_classification[i].keys())[0], dict(
-        [(api_extractor_obj.acces_metrics_path[j], it) for j, it in enumerate(v)]))]) for i, v in enumerate(api_extractor_obj.values_bioschemas_ssl_liscense_https)]
-    write_json_file(final_value_metrics_bioschemas_ssl_https_to_save,
-                    f'{args.output_directory}/{args.bioschemas_ssl_https_license}.json')
+    #Extract the different http codes from.
+    final_http_codes_to_save = [{list(api_extractor_obj.domain_classification[i].keys())[0]: k} for i, k in enumerate(api_extractor_obj.values_codes)]
 
-    # Distribute the http codes of in a comprensive format save to json file:
-    final_http_codes_to_save = [{list(api_extractor_obj.domain_classification[i].keys())[
-        0]: k} for i, k in enumerate(api_extractor_obj.values_codes)]
-    write_json_file(final_http_codes_to_save,
-                    f'{args.output_directory}/{args.http_codes}.json')
-
-    # Safe list of dictionaries: item is a domain and his count in a jsonfile.
-    write_json_file(primary_classifcation_domains,
-                    f'{args.output_directory}/{args.primary_classification}.json')
-
-    # Safe list of dictionaries about primary classification of groupation in a jsonfile.
-    write_json_file(count_of_most_popular_domains,
-                    f'{args.output_directory}/{args.count_domains}.json')
-
-    end = time.time()
-    print(f"Time of execution: {end - start}")
+    json_writer_obj = JSON_writer(f"{args.output_directory}/{args.output_file_name_metrics}",
+                                    time_of_execution = str(datetime.now()),
+                                    bioschemas_ssl_https_license = bioschemas_ssl_https_to_save,
+                                    http_codes_by_classification = final_http_codes_to_save,
+                                    domains_classification = CLASSIFICATION_DOMAINS,
+                                    domains_count = count_of_most_popular_domains,
+                                    problematic_urls = api_extractor_obj.problematic_url,
+                                    tools_list_unique = api_extractor_obj.tools_list_unique_url
+                                )
+    logging.info(f"Saved the stats in {args.output_directory}/{args.output_file_name_metrics}.json")

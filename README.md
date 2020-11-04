@@ -6,12 +6,16 @@ This Python package extracts different metrics of an API and save this stadistic
 - URL API to request.
 
 #### Output:
-- JSON file that contains the count of the most common domains of the unique URLs in these amount of bioinformatics tools.
-- JSON file of the primary classification about the precedence of these domains: Universities, Institutions, Life Science, Generic and Tools Collections.
-- JSON file of problematic extensions of the URLs for crawling. Example: .pdf, .gz, etc.
-- JSON file of the tools with unique URLs. This file is the input for https://github.com/AndreuJove/mastercrawlerTFG.
-- JSON file that contains the following metrics: bioschemas, ssl, https and licenses grouped by the primary classification mentioned before.
-- JSON file that contains the HTTP codes received from the tools grouped by the primary classification mentioned before.
+- JSON file showed in the next JSON schema.
+
+```
+schema := {
+  #name -> JSONSchema string.
+  #dateAndTime -> (JSONSchema stringWithFormat: 'date-time').
+  #numberOfPets -> JSONSchema number } asJSONSchema.
+
+```
+
 <br />
 
 
@@ -26,8 +30,7 @@ This Python package extracts different metrics of an API and save this stadistic
 - 5) From the root run the following command:<br />
         $ python3 main.py
 - 5) The name of the output files and the directory to save them can be changed using the following command line (write it with the default values):<br />
-        $ python3 main.py -o_n_domains 36 -o_directory output_data -o_tools_unique_url tools_unique_url -o_problematic_tools problematic_tools -o_bio_ssl_https bioschemas_ssl_https_license_by_classification -o_https_codes http_codes_by_classification -o_classification primary_classification_domains
-        -o_count_domains count_domains_tools_unique_url
+        $ python3 main.py input_url "https://dev-openebench.bsc.es/monitor/rest/edam/aggregate?projection=description&projection=web&name=&label=null" -number_domains 36 -output_directory output_data -output_file_name_metrics metrics_api_v
 <br />
 
 
