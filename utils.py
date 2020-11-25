@@ -1,5 +1,8 @@
+import sys
 import json
 import pandas as pd
+import requests
+
 
 #Creates a dataframe of 2 columns given, from a dict and displays the length of the dataframe. 
 def create_df_from_dict(dict_given, col_1, col_2, number_for_length_df):
@@ -24,4 +27,27 @@ def write_json_file(data, path):
     with open(path, 'w') as f:
         json.dump(data, f)
 
+def request_api(url):
+    headers = {'Accept' : 'application/json'}
+    try:
+        with requests.get(url, stream=True, headers = headers ) as r:
+            return r.json()
+    except Exception as e:
+        print(f"ERROR: the website {url} to request is not available at this moment.")
+        print(f"INFO: Exception raised: {str(e)}.")
+        sys.exit()
 
+def create_dataframe_access(obj):
+    return pd.DataFrame(list(zip(obj.websites, 
+                                obj.operationals, 
+                                obj.uptime_30_days, 
+                                obj.average_access_time, 
+                                obj.redirections
+                                )), 
+                                columns =['Website', 
+                                         'HTTP Code', 
+                                            "Days Up", 
+                                            "Access time", 
+                                            "Redirections"
+                                        ]
+                        ) 
