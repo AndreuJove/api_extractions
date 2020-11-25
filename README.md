@@ -3,91 +3,12 @@
 This Python package extracts different metrics of an API and save this stadistics in JSON files. Also elaborates the Input file of https://github.com/AndreuJove/mastercrawlerTFG.
 
 #### Input:
-- URL API to request.
+- URL API /tool.
+- URL API /metrics.
 
 #### Output:
-- JSON file called: metrics_api_v.json follows the next JSON schema. Showed only the first item.
+- JSON file with all the stadistics: extracted_metrics.json.
 
-```
-metrics_api_v.json = {
-  'time_of_execution' : type="string",
-  'bioschemas_ssl_https_license' : [
-                                        {
-                                                "university": {
-                                                        "bioschemas": [
-                                                        type="integer",
-                                                        type="integer"
-                                                        ],
-                                                        "ssl": [
-                                                        type="integer",
-                                                        type="integer"                               
-                                                        ],
-                                                        "license": [
-                                                        type="integer",
-                                                        type="integer"
-                                                        ],
-                                                        "https": [
-                                                        type="integer",
-                                                        type="integer"
-                                                        ]
-                                                }
-                                                },
-                                ...
-  ],
-  'http_codes_by_classification' : [
-                                        {
-                                        "university": {
-                                                "200": type="integer",
-                                                "301": type="integer",
-                                                "408": type="integer",
-                                                "205": type="integer"
-                                        }
-                                        },
-                                ...
-  ],
-  'domains_classification' : [
-                                {
-                                "university": [
-                                        type="string",
-                                        type="string",
-                                        type="string",
-                                        type="string",
-                                        type="string"
-                                ]
-                                },
-                                ...
-  ],
-  "domains_count" : [
-                                {"Domain" : [
-                                type="string",
-                                ...
-                                ]
-                                },
-                                {"Count" : [
-                                type="integer"   
-                                ...
-                        ]
-
-  ],
-  "problematic_urls" : [
-                                {"first_url_tool" : type="string",
-                                "name" : type="string",
-                                "id" : type="string",
-                                }
-                                ...
-  ],
-  "tools_list_unique" : [
-                                {"first_url_tool" : type="string",
-                                "name" : type="string"/type="list",
-                                "id" : type="string"/type="list",
-                                }         
-                                ...
-  ]
-
-}
-
-
-```
 
 <br />
 
@@ -103,7 +24,11 @@ metrics_api_v.json = {
 - 5) From the root run the following command:<br />
         $ python3 main.py
 - 5) The name of the output files and the directory to save them can be changed using the following command line (write it with the default values):<br />
-        $ python3 main.py input_url "https://dev-openebench.bsc.es/monitor/rest/edam/aggregate?projection=description&projection=web&name=&label=null" -number_domains 36 -output_directory output_data -output_file_name_metrics metrics_api_v
+        $ python3 main.py -input_url_tools "https://openebench.bsc.es/monitor/tool" 
+                        -input_url_metrics "https://openebench.bsc.es/monitor/metrics"
+                        -number_domains 36 
+                        -output_directory output_data 
+                        -output_file_name_metrics extracted_metrics
 <br />
 
 

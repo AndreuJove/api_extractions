@@ -3,7 +3,7 @@ import logging
 import argparse
 import collections
 from datetime import datetime
-from api_extractors import Metrics_Extractor
+from api_extractors import MetricsExtractor
 from json_writer import JSON_writer
 from constants import CLASSIFICATION_DOMAINS, DICT_CODES_DESCRIPTION
 from utils import create_df_from_dict, extract_columns_df, request_api, create_dataframe_access
@@ -55,12 +55,10 @@ def main(args):
 
     logging.info(f"Unique websites: {len(metrics_homepage)}")
     # Instance the object to calculate the differents metrics:
-    api_extractor_obj = Metrics_Extractor(metrics_homepage,
+    api_extractor_obj = MetricsExtractor(metrics_homepage,
                                         CLASSIFICATION_DOMAINS)
     # Run the specific methods:
     logging.info("Calculating the stadistics. ESTIMATED TIME: 1s.")
-    api_extractor_obj.iterate_in_json()
-    api_extractor_obj.counter_domains_of_list_unique()
 
     logging.info("Stadistics succesfully extracted.")
 
@@ -82,7 +80,7 @@ def main(args):
     df_tab_access = create_dataframe_access(api_extractor_obj)
 
     # Instance of the JSON writer object
-    json_writer_obj = JSON_writer(f"{args.output_directory}/{args.output_file_name_metrics}",
+    JSON_writer(f"{args.output_directory}/{args.output_file_name_metrics}",
                                     time_of_execution = str(datetime.now()),
                                     bioschemas_ssl_https_license = bioschemas_ssl_https_to_save,
                                     http_codes_by_classification = final_http_codes_to_save,
@@ -92,8 +90,6 @@ def main(args):
                                     dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
                                     dict_uptimes_days = dict(collections.Counter(df_tab_access['Days Up'].dropna().astype(int).to_list())),
                                     total_len_tools = len(tools)
-                                    # problematic_urls = api_extractor_obj.problematic_url,
-                                    # tools_list_unique = api_extractor_obj.tools_list_unique_url
                                 )
     logging.info(f"Saved the Stadistics in {args.output_directory}/{args.output_file_name_metrics}.json")
 
