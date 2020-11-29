@@ -1,6 +1,6 @@
 
 ## Description of the package:
-This Python package extracts different metrics of an API and save this stadistics in JSON files. Also elaborates the Input file of https://github.com/AndreuJove/mastercrawlerTFG.
+This Python package extracts different metrics of an API and save this stadistics in JSON files.
 
 #### Input:
 - URL API /tool.

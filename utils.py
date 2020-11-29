@@ -3,34 +3,35 @@ import json
 import pandas as pd
 import requests
 
-
-#Creates a dataframe of 2 columns given, from a dict and displays the length of the dataframe. 
 def create_df_from_dict(dict_given, col_1, col_2, number_for_length_df):
+    # Creates a dataframe of 2 columns given, from a dict and displays the length of the dataframe. 
     return pd.DataFrame(dict_given.items(), columns=[
                     col_1, col_2]).sort_values(by=col_2, ascending=False)[:number_for_length_df] 
 
-#Extract the columns of a dataframe and safe as a list of dictionaries ({<name_column> : <list of values in the column>})
 def extract_columns_df(df):
+    # Extract the columns of a dataframe and safe as a list of dictionaries ({<name_column> : <list of values in the column>})
     list_out = []
     for col in df.columns:
         list_out.append({col : df[col].tolist()})
     return list_out
 
-#Open JSON file and return a list of dictionaries:
 def open_json(pth):
-    with open(pth, "r") as fp:
-        jsonInput_data = json.load(fp)
-    return jsonInput_data
+    # Open JSON file and return with encoding:
+    with open(pth, "r") as file:
+        return json.load(file)
 
-#Write on a json file a list of dictionaries:
 def write_json_file(data, path):
-    with open(path, 'w') as f:
-        json.dump(data, f)
+    # Write on a json file with given path:
+    with open(path, 'w') as file:
+        json.dump(data, file)
 
 def request_api(url):
-    headers = {'Accept' : 'application/json'}
+    # Make a request to an API to recieve format JSON
+    headers = {'Accept' : 'application/json',
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)"
+                }
     try:
-        with requests.get(url, stream=True, headers = headers ) as r:
+        with requests.get(url, stream=True, headers = headers, timeout=15) as r:
             return r.json()
     except Exception as e:
         print(f"ERROR: the website {url} to request is not available at this moment.")
@@ -38,6 +39,7 @@ def request_api(url):
         sys.exit()
 
 def create_dataframe_access(obj):
+    # Create dataframe from different list
     return pd.DataFrame(list(zip(obj.websites, 
                                 obj.operationals, 
                                 obj.uptime_30_days, 

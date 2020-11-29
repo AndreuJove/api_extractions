@@ -13,7 +13,7 @@ This classification will be used to compare metrics between them. And show their
 UNIVERSITY = [  'ncbi.nlm.nih.gov', 
                 'ebi.ac.uk',
                 'broadinstitute.org',
-                'csbio.sjtu.edu.cn',
+                # 'csbio.sjtu.edu.cn',
                 'dna.leeds.ac.uk' 
             ]
 
