@@ -24,11 +24,11 @@ This Python package extracts different metrics of an API and save this stadistic
 - 5) From the root run the following command:<br />
         $ python3 main.py
 - 5) The name of the output files and the directory to save them can be changed using the following command line (write it with the default values):<br />
-        $ python3 main.py -input_url_tools "https://openebench.bsc.es/monitor/tool" 
-                        -input_url_metrics "https://openebench.bsc.es/monitor/metrics"
-                        -number_domains 36 
-                        -output_directory output_data 
-                        -output_file_name_metrics extracted_metrics
+        $ python3 main.py -input_url_tools "https://openebench.bsc.es/monitor/tool" <br />
+                        -input_url_metrics "https://openebench.bsc.es/monitor/metrics" <br />
+                        -number_domains 36 <br />
+                        -output_directory output_data <br />
+                        -output_file_name_metrics extracted_metrics <br />
 <br />
 
 

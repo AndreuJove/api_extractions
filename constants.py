@@ -1,19 +1,17 @@
 """
 
-This document conforms a primary classification of the procedence of different domains.
-This classification will be used to compare metrics between them. And show their strengths and weaknesses.
-
+This document contains differents constants for the package
 
 """
 
 # Primary classification of domains, can be change it in the future.
-#There 5 groups.
+# There 5 groups.
 
 #These domains referes to websites of Universtiies.
 UNIVERSITY = [  'ncbi.nlm.nih.gov', 
                 'ebi.ac.uk',
                 'broadinstitute.org',
-                # 'csbio.sjtu.edu.cn',
+                'csbio.sjtu.edu.cn',
                 'dna.leeds.ac.uk' 
             ]
 
@@ -70,7 +68,7 @@ CLASSIFICATION_DOMAINS = [
                             {'total': []}
                         ]
 
-
+# Codes HTTP and the description
 DICT_CODES_DESCRIPTION = {
     100 : "100 <br>Continue",
     101 : "101 <br>Switching Protocols",

@@ -2,7 +2,9 @@ import json
 
 class JSON_writer():
     """
+
     This class collect all the arguments to create a json file
+    
     """
     def __init__(self, path, **kwargs):
         self.path = path

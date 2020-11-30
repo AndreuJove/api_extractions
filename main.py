@@ -45,12 +45,13 @@ def main(args):
 
     logging.info("Starting the requests. ESTIMATED TIME: 10s.")
 
+    # Request APIs to extract information
     tools = request_api(args.input_url_tools)
     metrics = request_api(args.input_url_metrics)
 
     logging.info("Extracting entries from APIs. ESTIMATED TIME: 12s.")
 
-    # Calculated match.
+    # Calculated the match.
     metrics_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
 
     logging.info(f"Unique websites: {len(metrics_homepage)}")
@@ -104,14 +105,14 @@ if __name__ == "__main__":
                         help="The input API url of tools. DEFAULT: https://openebench.bsc.es/monitor/tool"
                         )
 
-    # Add the argument of URL of the metrics:
+    # Add the argument of URL of the API for metrics:
     parser.add_argument('-input_url_metrics',
                         type=str,
                         default="https://openebench.bsc.es/monitor/metrics",
                         help="The input API url of metrics data. DEFAULT: https://openebench.bsc.es/monitor/metrics"
                         )
 
-    # Add the argument of the number of the most common domains to be extracted extract. The default is 36:
+    # Add the argument of the number of the most found domains to be extracted extract. The default is 36:
     parser.add_argument('-number_domains',
                         type=int,
                         default=36,
@@ -125,7 +126,7 @@ if __name__ == "__main__":
                         help="Name of the directory for the outputs files"
                         )
 
-    # Add the argument of output's directory name where the output files will be saved:
+    # Add the argument of output file name.
     parser.add_argument('-output_file_name_metrics',
                         type=str,
                         default="extracted_metrics",
