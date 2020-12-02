@@ -40,6 +40,26 @@ def change_keys_of_dictionary(dictionary, dict_codes_description):
     return dictionary
 
 def main(args):
+
+    # Set up logging to file - see previous section for more details
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%m-%d %y %H:%M:%S',
+                        filename=f'{args.log_file_name}.log',
+                        filemode='w')
+    # Define a Handler which writes INFO messages or higher to the sys.stderr
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+
+    # Set a format which is simpler for console use.
+    formatter = logging.Formatter('%(levelname)-12s %(filename)-12s %(message)s')
+
+    # Tell the handler to use this format.
+    console.setFormatter(formatter)
+
+    # Add the handler to the root logger.
+    logging.getLogger().addHandler(console)
+
     # Create the logger:
     logging.basicConfig(format='%(levelname)s: %(message)s ', level=logging.INFO)
 
@@ -101,6 +121,7 @@ if __name__ == "__main__":
     # Add the argument of URL of the api to extract the data:
     parser.add_argument('-input_url_tools',
                         type=str,
+                        metavar="",
                         default="https://openebench.bsc.es/monitor/tool",
                         help="The input API url of tools. DEFAULT: https://openebench.bsc.es/monitor/tool"
                         )
@@ -108,6 +129,7 @@ if __name__ == "__main__":
     # Add the argument of URL of the API for metrics:
     parser.add_argument('-input_url_metrics',
                         type=str,
+                        metavar="",
                         default="https://openebench.bsc.es/monitor/metrics",
                         help="The input API url of metrics data. DEFAULT: https://openebench.bsc.es/monitor/metrics"
                         )
@@ -115,13 +137,15 @@ if __name__ == "__main__":
     # Add the argument of the number of the most found domains to be extracted extract. The default is 36:
     parser.add_argument('-number_domains',
                         type=int,
-                        default=36,
+                        metavar="",
+                        default=40,
                         help="Number of domains to extract, the default number is 36 domains."
                         )
 
     # Add the argument of output's directory name where the output files will be saved:
     parser.add_argument('-output_directory',
                         type=str,
+                        metavar="",
                         default="output_data",
                         help="Name of the directory for the outputs files"
                         )
@@ -129,8 +153,17 @@ if __name__ == "__main__":
     # Add the argument of output file name.
     parser.add_argument('-output_file_name_metrics',
                         type=str,
+                        metavar="",
                         default="extracted_metrics",
                         help="Name of the output file of the system"
+                        )
+
+    # Add the argument of output's filename of log.
+    parser.add_argument('-log_file_name',
+                        type=str,
+                        metavar="",
+                        default="api_extraction",
+                        help="Name of the output log file of the program"
                         )
 
     args = parser.parse_args()
