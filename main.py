@@ -4,9 +4,13 @@ import argparse
 import collections
 from datetime import datetime
 from api_extractors import MetricsExtractor
-from json_writer import JSON_writer
+from json_writer import JsonWriter
 from constants import CLASSIFICATION_DOMAINS, DICT_CODES_DESCRIPTION
 from utils import create_df_from_dict, extract_columns_df, request_api, create_dataframe_access
+
+"""
+Python module to run and extract the specific data from a API websites
+"""
 
 def match_entries_tools_metrics_by_unique_homepage(metrics, tools):
     # Get the uniques homepages from tools and match with her @id.
@@ -66,8 +70,8 @@ def main(args):
     logging.info("Starting the requests. ESTIMATED TIME: 10s.")
 
     # Request APIs to extract information
-    tools = request_api(args.input_url_tools)
-    metrics = request_api(args.input_url_metrics)
+    tools = request_api(args.input_url_tools, logging)
+    metrics = request_api(args.input_url_metrics, logging)
 
     logging.info("Extracting entries from APIs. ESTIMATED TIME: 12s.")
 
@@ -75,10 +79,11 @@ def main(args):
     metrics_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
 
     logging.info(f"Unique websites: {len(metrics_homepage)}")
+
     # Instance the object to calculate the differents metrics:
     api_extractor_obj = MetricsExtractor(metrics_homepage,
                                         CLASSIFICATION_DOMAINS)
-    # Run the specific methods:
+
     logging.info("Calculating the stadistics. ESTIMATED TIME: 1s.")
 
     logging.info("Stadistics succesfully extracted.")
@@ -88,7 +93,7 @@ def main(args):
                                                     "Domain",
                                                     "Count",
                                                     args.number_domains)
-    # Extract as a list the columns of the dataframe and return list of dictionaries to save in json:
+    # Extract as a list the columns of the dataframe
     count_of_most_popular_domains = extract_columns_df(df_domains)
 
     # Extract bioschemas, ssl, https, and license from the object by the classification domains.
@@ -101,7 +106,7 @@ def main(args):
     df_tab_access = create_dataframe_access(api_extractor_obj)
 
     # Instance of the JSON writer object
-    JSON_writer(f"{args.output_directory}/{args.output_file_name_metrics}",
+    JsonWriter(f"{args.output_directory}/{args.output_file_name_metrics}",
                                     time_of_execution = str(datetime.now()),
                                     bioschemas_ssl_https_license = bioschemas_ssl_https_to_save,
                                     http_codes_by_classification = final_http_codes_to_save,

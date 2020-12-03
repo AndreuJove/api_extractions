@@ -8,54 +8,52 @@ This document contains differents constants for the package
 # There 5 groups.
 
 #These domains referes to websites of Universtiies.
-UNIVERSITY = [  'ncbi.nlm.nih.gov', 
+UNIVERSITY = [  'ncbi.nlm.nih.gov',
                 'ebi.ac.uk',
                 'broadinstitute.org',
                 'csbio.sjtu.edu.cn',
-                'dna.leeds.ac.uk' 
+                'dna.leeds.ac.uk'
             ]
 
-INSTITUTIONAL = ['cbs.dtu.dk', 
-                'galaxy.pasteur.fr', 
-                'bioinformatics.psb.ugent.be', 
-                'zhanglab.ccmb.med.umich.edu', 
+INSTITUTIONAL = ['cbs.dtu.dk',
+                'galaxy.pasteur.fr',
+                'bioinformatics.psb.ugent.be',
+                'zhanglab.ccmb.med.umich.edu',
                 'jci-bioinfo.cn',
-                'sanger.ac.uk', 
-                'protein.bio.unipd.it',  
-                'imgt.org', 
+                'sanger.ac.uk',
+                'protein.bio.unipd.it',
+                'imgt.org',
                 'genius.embnet.dkfz-heidelberg.de',
-                'bioinformatics.psb.ugent.be', 
-                'ccb.jhu.edu', 
-                'tools.proteomecenter.org', 
+                'bioinformatics.psb.ugent.be',
+                'ccb.jhu.edu',
+                'tools.proteomecenter.org',
                 'genome.sph.umich.edu'
                 ]
 
 LIFESCIENCE =  [
-                'bioconductor.org', 
+                'bioconductor.org',
                 'emboss.open-bio.org'
                 ]
 
 COLLECTIONS = [
-                'bioinformatics.org', 
-                'ms-utils.org', 
+                'bioinformatics.org',
+                'ms-utils.org',
                 'web.expasy.org'
             ]
 
 GENERIC = [
-            'github.com', 
-            'cran.r-project.org', 
-            'doi.org', 
-            'imtech.res.in', 
+            'github.com',
+            'cran.r-project.org',
+            'doi.org',
+            'imtech.res.in',
             'pypi.python.org',
-            'sourceforge.net', 
-            'sites.google.com', 
-            'metacpan.org', 
-            'gitlab.com', 
-            'code.google.com', 
+            'sourceforge.net',
+            'sites.google.com',
+            'metacpan.org',
+            'gitlab.com',
+            'code.google.com',
             'bitbucket.org'
         ]
-
-
 
 # Create list of dictionaries to save in json format:
 CLASSIFICATION_DOMAINS = [
@@ -73,7 +71,7 @@ DICT_CODES_DESCRIPTION = {
     100 : "100 <br>Continue",
     101 : "101 <br>Switching Protocols",
     102 : "102 <br>Processing",
-    200 : "200 <br>OK", 
+    200 : "200 <br>OK",
     201 : "201 <br>Created",
     202 : "202 <br>Accepted",
     203 : "203 <br>Non-authoritative Information",
