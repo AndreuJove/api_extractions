@@ -24,7 +24,7 @@ def open_json(pth):
     with open(pth, "r") as file:
         return json.load(file)
 
-def write_json_file(data, path):
+def write_json_file(path, data):
     # Write on a json file with given path:
     with open(path, 'w') as file:
         json.dump(data, file)
@@ -53,9 +53,9 @@ def create_dataframe_access(obj):
                                 obj.redirections
                                 )),
                                 columns =['Website',
-                                         'HTTP Code',
-                                            "Days Up",
-                                            "Access time",
+                                         'HTTP_Code',
+                                            "Days_Up",
+                                            "Access_time",
                                             "Redirections"
                                         ]
                         )

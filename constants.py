@@ -56,15 +56,16 @@ GENERIC = [
         ]
 
 # Create list of dictionaries to save in json format:
-CLASSIFICATION_DOMAINS = [
-                            {'university': UNIVERSITY},
-                            {'institucional': INSTITUTIONAL},
-                            {'lifeScience': LIFESCIENCE},
-                            {'collections': COLLECTIONS},
-                            {'generic': GENERIC},
-                            {'others': []},
-                            {'total': []}
-                        ]
+CLASSIFICATION_DOMAINS = {
+                            'university': UNIVERSITY,
+                            'institucional': INSTITUTIONAL,
+                            'lifeScience': LIFESCIENCE,
+                            'collections': COLLECTIONS,
+                            'generic': GENERIC,
+                            'others': [],
+                            'total': [],
+                        }
+                        
 
 # Codes HTTP and the description
 DICT_CODES_DESCRIPTION = {

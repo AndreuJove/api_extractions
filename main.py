@@ -1,16 +1,23 @@
 import os
 import logging
 import argparse
+import json
 import collections
 from datetime import datetime
-from api_extractors import MetricsExtractor
-from json_writer import JsonWriter
+import api_extractors
+import utils
 from constants import CLASSIFICATION_DOMAINS, DICT_CODES_DESCRIPTION
-from utils import create_df_from_dict, extract_columns_df, request_api, create_dataframe_access
+
 
 """
-Python module to run and extract the specific data from a API websites
+Python module to extract the specific data from a API websites
 """
+
+
+def write_json_file_given_path(path, **kwargs):
+    kwargs_final = kwargs
+    with open(f"{path}.json", 'w') as file:
+        json.dump(kwargs_final, file, indent=4, sort_keys=True)
 
 def match_entries_tools_metrics_by_unique_homepage(metrics, tools):
     # Get the uniques homepages from tools and match with her @id.
@@ -43,8 +50,7 @@ def change_keys_of_dictionary(dictionary, dict_codes_description):
         del dictionary[item[0]]
     return dictionary
 
-def main(args):
-
+def create_logging():
     # Set up logging to file - see previous section for more details
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -64,24 +70,30 @@ def main(args):
     # Add the handler to the root logger.
     logging.getLogger().addHandler(console)
 
-    # Create the logger:
-    logging.basicConfig(format='%(levelname)s: %(message)s ', level=logging.INFO)
+    return logging
+
+def main(args):
+    logging = create_logging()
 
     logging.info("Starting the requests. ESTIMATED TIME: 10s.")
 
     # Request APIs to extract information
-    tools = request_api(args.input_url_tools, logging)
-    metrics = request_api(args.input_url_metrics, logging)
+    tools = utils.request_api(args.input_url_tools, logging)
+    metrics = utils.request_api(args.input_url_metrics, logging)
 
     logging.info("Extracting entries from APIs. ESTIMATED TIME: 12s.")
 
-    # Calculated the match.
-    metrics_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
+    # Get for each website unique the corresponding metrics
+    metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
 
-    logging.info(f"Unique websites: {len(metrics_homepage)}")
+    # metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
+
+    # utils.write_json_file("metrics_unique_homepage.json", metrics_unique_homepage)
+
+    logging.info(f"Unique websites: {len(metrics_unique_homepage)}")
 
     # Instance the object to calculate the differents metrics:
-    api_extractor_obj = MetricsExtractor(metrics_homepage,
+    api_extractor_obj = api_extractors.MetricsExtractor(metrics_unique_homepage,
                                         CLASSIFICATION_DOMAINS)
 
     logging.info("Calculating the stadistics. ESTIMATED TIME: 1s.")
@@ -89,32 +101,26 @@ def main(args):
     logging.info("Stadistics succesfully extracted.")
 
     # Create Dataframe of the counter of domains
-    df_domains = create_df_from_dict(api_extractor_obj.total_dict_domains_counter,
+    df_domains = utils.create_df_from_dict(api_extractor_obj.total_dict_domains_counter,
                                                     "Domain",
                                                     "Count",
                                                     args.number_domains)
     # Extract as a list the columns of the dataframe
-    count_of_most_popular_domains = extract_columns_df(df_domains)
-
-    # Extract bioschemas, ssl, https, and license from the object by the classification domains.
-    bioschemas_ssl_https_to_save = [dict([(list(api_extractor_obj.domain_classification[i].keys())[0], dict([(api_extractor_obj.acces_metrics_path[j], it) for j, it in enumerate(v)]))]) for i, v in enumerate(api_extractor_obj.values_bioschemas_ssl_liscense_https)]
-
-    # Extract the different http codes from.
-    final_http_codes_to_save = [{list(api_extractor_obj.domain_classification[i].keys())[0]: k} for i, k in enumerate(api_extractor_obj.values_codes)]
+    count_of_most_popular_domains = utils.extract_columns_df(df_domains)
 
     # Access Tab dataframe:
-    df_tab_access = create_dataframe_access(api_extractor_obj)
+    df_tab_access = utils.create_dataframe_access(api_extractor_obj)
 
     # Instance of the JSON writer object
-    JsonWriter(f"{args.output_directory}/{args.output_file_name_metrics}",
+    write_json_file_given_path(f"{args.output_directory}/{args.output_file_name_metrics}",
                                     time_of_execution = str(datetime.now()),
-                                    bioschemas_ssl_https_license = bioschemas_ssl_https_to_save,
-                                    http_codes_by_classification = final_http_codes_to_save,
+                                    bioschemas_ssl_https_license = api_extractor_obj.values_bioschemas_ssl_liscense_https,
+                                    http_codes_by_classification = api_extractor_obj.values_codes,
                                     domains_classification = CLASSIFICATION_DOMAINS,
                                     domains_count = count_of_most_popular_domains,
                                     df_acces = df_tab_access.to_dict(orient="records"),
-                                    dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
-                                    dict_uptimes_days = dict(collections.Counter(df_tab_access['Days Up'].dropna().astype(int).to_list())),
+                                    dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP_Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
+                                    dict_uptimes_days = dict(collections.Counter(df_tab_access['Days_Up'].dropna().astype(int).to_list())),
                                     total_len_tools = len(tools)
                                 )
     logging.info(f"Saved the Stadistics in {args.output_directory}/{args.output_file_name_metrics}.json")
@@ -124,7 +130,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Python project to extract and analyse data from a bioinformatics API")
 
     # Add the argument of URL of the api to extract the data:
-    parser.add_argument('-input_url_tools',
+    parser.add_argument('--input_url_tools',
                         type=str,
                         metavar="",
                         default="https://openebench.bsc.es/monitor/tool",
@@ -132,7 +138,7 @@ if __name__ == "__main__":
                         )
 
     # Add the argument of URL of the API for metrics:
-    parser.add_argument('-input_url_metrics',
+    parser.add_argument('--input_url_metrics',
                         type=str,
                         metavar="",
                         default="https://openebench.bsc.es/monitor/metrics",
@@ -140,15 +146,15 @@ if __name__ == "__main__":
                         )
 
     # Add the argument of the number of the most found domains to be extracted extract. The default is 36:
-    parser.add_argument('-number_domains',
+    parser.add_argument('--number_domains',
                         type=int,
                         metavar="",
                         default=40,
-                        help="Number of domains to extract, the default number is 36 domains."
+                        help="Number of domains to extract, the default number is 40 domains."
                         )
 
     # Add the argument of output's directory name where the output files will be saved:
-    parser.add_argument('-output_directory',
+    parser.add_argument('--output_directory',
                         type=str,
                         metavar="",
                         default="output_data",
@@ -156,7 +162,7 @@ if __name__ == "__main__":
                         )
 
     # Add the argument of output file name.
-    parser.add_argument('-output_file_name_metrics',
+    parser.add_argument('--output_file_name_metrics',
                         type=str,
                         metavar="",
                         default="extracted_metrics",
@@ -164,7 +170,7 @@ if __name__ == "__main__":
                         )
 
     # Add the argument of output's filename of log.
-    parser.add_argument('-log_file_name',
+    parser.add_argument('--log_file_name',
                         type=str,
                         metavar="",
                         default="api_extraction",

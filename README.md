@@ -7,7 +7,7 @@ This Python package extracts different metrics of an API and save this stadistic
 - URL API /metrics.
 
 #### Output:
-- JSON file with all the stadistics: extracted_metrics.json.
+- JSON file with all the stadistics: output_data/extracted_metrics.json.
 
 
 <br />
@@ -25,11 +25,11 @@ This Python package extracts different metrics of an API and save this stadistic
         $ python3 main.py <br />
 6) The name of the output files and the directory to save them can be changed using the following command line (write it with the default values):<br />
         $ python3 main.py <br />
-        -input_url_tools "https://openebench.bsc.es/monitor/tool" <br />
-        -input_url_metrics "https://openebench.bsc.es/monitor/metrics" <br />
-        -number_domains 36 <br />
-        -output_directory output_data <br />
-        -output_file_name_metrics extracted_metrics <br /> 
+        --input_url_tools "https://openebench.bsc.es/monitor/tool" <br />
+        --input_url_metrics "https://openebench.bsc.es/monitor/metrics" <br />
+        --number_domains 40 <br />
+        --output_directory output_data <br />
+        --output_file_name_metrics extracted_metrics <br /> 
 <br />
 
 
