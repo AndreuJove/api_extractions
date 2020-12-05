@@ -1,6 +1,7 @@
 import sys
 import json
 import pandas as pd
+import numpy as np
 import requests
 
 """Set of functions used from different modules of this package"""
@@ -46,7 +47,7 @@ def request_api(url, logger):
 def create_dataframe_access(obj):
     # Create dataframe from different lists:
     # Name the different columns of the dataframe:
-    return pd.DataFrame(list(zip(obj.websites,
+    df =  pd.DataFrame(list(zip(obj.websites,
                                 obj.operationals,
                                 obj.uptime_30_days,
                                 obj.average_access_time,
@@ -59,4 +60,5 @@ def create_dataframe_access(obj):
                                             "Redirections"
                                         ]
                         )
-
+    df = df.replace({np.nan:None})
+    return df

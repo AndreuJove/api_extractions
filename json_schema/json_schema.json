@@ -1,0 +1,172 @@
+{
+    "_id": "api_extractions",
+    "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+    "description": "Extraction of metrics from different API",
+    "github": "https://github.com/AndreuJove/api_extractions",
+    "definitions": {
+        "bioschemas_ssl_https_license": {
+                                "type": "object",
+                                "description": "Bioschemas, SSL, HTTPS, License extracted from API by the domains classification",
+                                "properties": {
+                                                "collections": {
+                                                                "type": "object",
+                                                                "description": "group of tools from different procedences.",
+                                                                "properties": {
+                                                                                "bioschemas": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                },
+                                                                                "https": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                        }
+                                                                                },
+                                                                                "license": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                },
+                                                                                "ssl": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                        }
+                                                                                }
+                                                                }
+                                                            },
+                                                "generic": {
+                                                                "type": "object",
+                                                                "description": "generic repositories of software.",
+                                                                "properties": {
+                                                                                "bioschemas": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                },
+                                                                                "https": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                },
+                                                                                "license": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                },
+                                                                                "ssl": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                }
+                                                                            }
+                                                            }
+                                                }   
+                                            },
+        "df_acces" :        {
+                            "type": "array",
+                            "description": "List of dictionaries to read as a pandas DataFrame for the tab of access websites.",
+                                                "items": {
+                                                    "type" : "object",
+                                                    "properties": {
+                                                                    "Access_time" : {
+                                                                                        "description": "The Average access time for recieving a response of the server in the last 30 days.",
+                                                                                        "type" : "integer"
+                                                                                    },
+                                                                    "Days_Up" :     {
+                                                                                        "description": "The number of days UP in the last 30 days",
+                                                                                        "type" : "integer"
+                                                                                    },
+                                                                    "HTTP_Code" :   {
+                                                                                        "description": "HTTP Code recieved from the API",
+                                                                                        "type" : "integer"
+                                                                                    },
+                                                                    "Redirections" :{
+                                                                                        "description": "Codes of redirections recieved",
+                                                                                        "type" : "array",
+                                                                                        "items":{
+                                                                                                    "type": "integer"
+                                                                                                }
+                                                                                    },
+                                                                    "Website" :     {
+                                                                                        "description": "Website of extraction",
+                                                                                        "type" : "string"
+                                                                                    }
+                                                                    }
+
+                                                        }
+                            },
+        "dict_http_codes_count" :{
+                                "type" : "object",
+                                "description": "The HTTP codes count recieved",
+                                "properties": {
+
+                                                }
+                                },
+        "dict_uptimes_days"      :{
+                                "type" : "object",
+                                "description": "Counter of days UP from 30 days",
+                                "properties": {
+                                                }
+        }, 
+        "domains_classification" : {
+                                "type" : "object",
+                                "description": "Each group with his corresponding domains",
+                                "properties": {
+                                                "collections" :{
+                                                                "type" : "array",
+                                                                "items": {
+                                                                        "type": "string"
+                                                                        }
+                                                                },
+                                                "generic" :     {
+                                                                "type" : "array",
+                                                                "items": {
+                                                                        "type": "string"
+                                                                        }
+                                                                },
+                                                "institucional" :{
+                                                                "type" : "array",
+                                                                "items": {
+                                                                        "type": "string"
+                                                                        }
+                                                                },
+                                                "lifeScience" :{
+                                                                "type" : "array",
+                                                                "items": {
+                                                                        "type": "string"
+                                                                        }
+                                                                },
+                                                "others" :{
+                                                                "type" : "array",
+                                                                "items": {
+                                                                        "type": "string"
+                                                                        }
+                                                            },
+                                                "total" :{
+                                                                "type" : "array",
+                                                                "items": {
+                                                                        "type": "string"
+                                                                        }
+                                                        },
+                                                "university" :{
+                                                                "type" : "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                        }
+                                                                }
+                                                }                              
+                                    }
+    
+
+
+
+                        }
+    }

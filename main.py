@@ -77,16 +77,16 @@ def main(args):
 
     logging.info("Starting the requests. ESTIMATED TIME: 10s.")
 
-    # Request APIs to extract information
-    tools = utils.request_api(args.input_url_tools, logging)
-    metrics = utils.request_api(args.input_url_metrics, logging)
+    # # Request APIs to extract information
+    # tools = utils.request_api(args.input_url_tools, logging)
+    # metrics = utils.request_api(args.input_url_metrics, logging)
 
     logging.info("Extracting entries from APIs. ESTIMATED TIME: 12s.")
 
     # Get for each website unique the corresponding metrics
-    metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
+    # metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
 
-    # metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
+    metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
 
     # utils.write_json_file("metrics_unique_homepage.json", metrics_unique_homepage)
 
@@ -100,6 +100,8 @@ def main(args):
 
     logging.info("Stadistics succesfully extracted.")
 
+
+
     # Create Dataframe of the counter of domains
     df_domains = utils.create_df_from_dict(api_extractor_obj.total_dict_domains_counter,
                                                     "Domain",
@@ -111,6 +113,9 @@ def main(args):
     # Access Tab dataframe:
     df_tab_access = utils.create_dataframe_access(api_extractor_obj)
 
+
+    df_final = df_tab_access.to_dict(orient="records")
+
     # Instance of the JSON writer object
     write_json_file_given_path(f"{args.output_directory}/{args.output_file_name_metrics}",
                                     time_of_execution = str(datetime.now()),
@@ -118,10 +123,10 @@ def main(args):
                                     http_codes_by_classification = api_extractor_obj.values_codes,
                                     domains_classification = CLASSIFICATION_DOMAINS,
                                     domains_count = count_of_most_popular_domains,
-                                    df_acces = df_tab_access.to_dict(orient="records"),
+                                    df_acces = df_final,
                                     dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP_Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
                                     dict_uptimes_days = dict(collections.Counter(df_tab_access['Days_Up'].dropna().astype(int).to_list())),
-                                    total_len_tools = len(tools)
+                                    # total_len_tools = len(tools)
                                 )
     logging.info(f"Saved the Stadistics in {args.output_directory}/{args.output_file_name_metrics}.json")
 

@@ -5,5 +5,3 @@
 *.ipynb
 *.ipynb_checkpoints
 *.log
-
-!json_schema/json_schema.json
