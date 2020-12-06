@@ -8,27 +8,36 @@ This document contains differents constants for the package
 # There 5 groups.
 
 #These domains referes to websites of Universtiies.
-UNIVERSITY = [  'ncbi.nlm.nih.gov',
+UNIVERSITY = [  
+                'ncbi.nlm.nih.gov',
                 'ebi.ac.uk',
                 'broadinstitute.org',
                 'csbio.sjtu.edu.cn',
-                'dna.leeds.ac.uk'
+                'dna.leeds.ac.uk',
+                "bioinf.uni-leipzig.de",
+                "genome.sph.umich.edu",
+                "bibiserv.cebitec.uni-bielefeld.de"
             ]
 
-INSTITUTIONAL = ['cbs.dtu.dk',
+INSTITUTIONAL = [
+                'cbs.dtu.dk',
                 'galaxy.pasteur.fr',
                 'bioinformatics.psb.ugent.be',
                 'zhanglab.ccmb.med.umich.edu',
+                'galaxy.bi.uni-freiburg.de',
                 'jci-bioinfo.cn',
                 'sanger.ac.uk',
                 'protein.bio.unipd.it',
                 'imgt.org',
                 'genius.embnet.dkfz-heidelberg.de',
-                'bioinformatics.psb.ugent.be',
                 'ccb.jhu.edu',
                 'tools.proteomecenter.org',
-                'genome.sph.umich.edu'
+                'genome.sph.umich.edu',
+                'mmb.irbbarcelona.org',
+                'bioinformatics.intec.ugent.be',
+                'omics.pnl.gov'
                 ]
+
 
 LIFESCIENCE =  [
                 'bioconductor.org',
@@ -41,6 +50,7 @@ COLLECTIONS = [
                 'web.expasy.org'
             ]
 
+
 GENERIC = [
             'github.com',
             'cran.r-project.org',
@@ -52,7 +62,9 @@ GENERIC = [
             'metacpan.org',
             'gitlab.com',
             'code.google.com',
-            'bitbucket.org'
+            'bitbucket.org',
+            "search.cpan.org",
+            
         ]
 
 # Create list of dictionaries to save in json format:

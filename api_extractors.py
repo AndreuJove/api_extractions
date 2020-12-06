@@ -4,12 +4,12 @@ from functools import reduce
 class MetricsExtractor:
     # Class for extracting different metrics of the api.
 
-    def __init__(self, json, domain_classification):
+    def __init__(self, json, domain_classification, logger):
         self.json = json
         self.domain_classification = domain_classification
+        self.logger = logger
         self.websites = []
         self.total_dict_domains_counter = {}
-        self.path_to_http_codes = ['project', 'website', 'operational']
         self.path_to_website = ['project', 'website']
         self.metrics_website = ['bioschemas', 'ssl', 'license', 'https']
         self.values_bioschemas_ssl_liscense_https = [[[0,0] for _ in range(4)] for _ in range(len(self.domain_classification))]
@@ -27,12 +27,13 @@ class MetricsExtractor:
         # Returns the domain from a url given.
         return url.lower().split("://")[-1].split("/")[0].replace("www.", "")
 
-    @staticmethod
-    def check_if_value_exists(item, path):
+    def check_if_value_exists(self, item, path):
         # Check if the value exist inside a path and return it.
         try:
             return reduce(getitem, path, item)
         except KeyError:
+            if path[-1] not in ['redirects', 'average_access_time']:
+                self.logger.error(f"Entry: {item['@id']} doesn't have '{path[-1]}'.")
             return None
 
     def format_values_bioschemas_ssl_license_https(self):
@@ -75,25 +76,26 @@ class MetricsExtractor:
             self.extract_http_codes_from_api(tool, domain)
 
     def extract_http_codes_from_api(self, item, domain):
+        http_code = self.check_if_value_exists(item, ['project', 'website', 'operational'])
         # Extract the http codes by classification domains.
         found_item = False
-        if reduce(getitem, self.path_to_http_codes, item) in self.values_codes["total"]:
-            self.values_codes["total"][reduce(getitem, self.path_to_http_codes, item)] += 1
+        if http_code in self.values_codes["total"]:
+            self.values_codes["total"][http_code] += 1
         else:
-            self.values_codes["total"][reduce(getitem, self.path_to_http_codes, item)] = 1
+            self.values_codes["total"][http_code] = 1
         for group, list_domains in self.domain_classification.items():
             if domain in list_domains:
-                if reduce(getitem, self.path_to_http_codes, item) in self.values_codes[group]:
-                    self.values_codes[group][reduce(getitem, self.path_to_http_codes, item)] += 1
+                if http_code in self.values_codes[group]:
+                    self.values_codes[group][http_code] += 1
                 else:
-                    self.values_codes[group][reduce(getitem, self.path_to_http_codes, item)] = 1
+                    self.values_codes[group][http_code] = 1
                 found_item = True
         # If the item is not in any of the domains of the primary classification.
         if not found_item:
-            if reduce(getitem, self.path_to_http_codes, item) in self.values_codes["others"]:
-                self.values_codes["others"][reduce(getitem, self.path_to_http_codes, item)] += 1
+            if http_code in self.values_codes["others"]:
+                self.values_codes["others"][http_code] += 1
             else:
-                self.values_codes["others"][reduce(getitem, self.path_to_http_codes, item)] = 1
+                self.values_codes["others"][http_code] = 1
 
     def extract_all_bioschemas_ssl_license_https_from_api(self, item, domain):
         # Extract the domain of the URL of the item of the api:

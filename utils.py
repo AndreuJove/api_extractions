@@ -40,7 +40,7 @@ def request_api(url, logger):
             return response.json()
     except Exception as exception:
         # Save on the logger the errors:
-        logger.error(f"The website {url} to request is not available at this moment..")
+        logger.error(f"The website {url} to request is not available at this moment.")
         logger.error(f"Exception raised: {str(exception)}")
         sys.exit()
 

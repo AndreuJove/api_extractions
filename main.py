@@ -8,16 +8,13 @@ import api_extractors
 import utils
 from constants import CLASSIFICATION_DOMAINS, DICT_CODES_DESCRIPTION
 
-
 """
 Python module to extract the specific data from a API websites
 """
 
-
 def write_json_file_given_path(path, **kwargs):
-    kwargs_final = kwargs
     with open(f"{path}.json", 'w') as file:
-        json.dump(kwargs_final, file, indent=4, sort_keys=True)
+        json.dump(kwargs, file, indent=4, sort_keys=True)
 
 def match_entries_tools_metrics_by_unique_homepage(metrics, tools):
     # Get the uniques homepages from tools and match with her @id.
@@ -72,21 +69,21 @@ def create_logging():
 
     return logging
 
-def main(args):
+def main():
     logging = create_logging()
 
     logging.info("Starting the requests. ESTIMATED TIME: 10s.")
 
     # # Request APIs to extract information
-    # tools = utils.request_api(args.input_url_tools, logging)
-    # metrics = utils.request_api(args.input_url_metrics, logging)
+    tools = utils.request_api(args.input_url_tools, logging)
+    metrics = utils.request_api(args.input_url_metrics, logging)
 
     logging.info("Extracting entries from APIs. ESTIMATED TIME: 12s.")
 
     # Get for each website unique the corresponding metrics
-    # metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
+    metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
 
-    metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
+    # metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
 
     # utils.write_json_file("metrics_unique_homepage.json", metrics_unique_homepage)
 
@@ -94,14 +91,14 @@ def main(args):
 
     # Instance the object to calculate the differents metrics:
     api_extractor_obj = api_extractors.MetricsExtractor(metrics_unique_homepage,
-                                        CLASSIFICATION_DOMAINS)
+                                        CLASSIFICATION_DOMAINS, logging)
 
     logging.info("Calculating the stadistics. ESTIMATED TIME: 1s.")
 
     logging.info("Stadistics succesfully extracted.")
 
 
-
+    write_json_file_given_path("total_counter", counter_total = api_extractor_obj.total_dict_domains_counter)
     # Create Dataframe of the counter of domains
     df_domains = utils.create_df_from_dict(api_extractor_obj.total_dict_domains_counter,
                                                     "Domain",
@@ -126,7 +123,7 @@ def main(args):
                                     df_acces = df_final,
                                     dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP_Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
                                     dict_uptimes_days = dict(collections.Counter(df_tab_access['Days_Up'].dropna().astype(int).to_list())),
-                                    # total_len_tools = len(tools)
+                                    total_len_tools = len(tools)
                                 )
     logging.info(f"Saved the Stadistics in {args.output_directory}/{args.output_file_name_metrics}.json")
 
@@ -188,5 +185,5 @@ if __name__ == "__main__":
     if not os.path.isdir(args.output_directory):
         os.mkdir(args.output_directory)
 
-    main(args)
+    main()
     
