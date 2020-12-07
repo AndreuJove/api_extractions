@@ -22,6 +22,16 @@ def match_entries_tools_metrics_by_unique_homepage(metrics, tools):
     # Add homepage in metrics entry for each @id
     return match_id_with_metric_add_homepage(dict_id_homepage, metrics)
 
+def get_ultimate_entries_and_len_tools(tools):
+    collection = {}
+    ultimate_entries = []
+    for entry in tools:
+        collection.setdefault(entry["@label"], []).append(entry)
+        if "confidence" in entry:
+            if entry['confidence'] == "ultimate":
+                ultimate_entries.append(entry)
+    return ultimate_entries, len(collection)
+
 def calculate_unique_homepages(tools):
     # Get the uniques websites and match with the first @id to match later with metrics.
     dict_id_homepage = {}
@@ -69,25 +79,30 @@ def create_logging():
 
     return logging
 
+
 def main():
     logging = create_logging()
 
     logging.info("Starting the requests. ESTIMATED TIME: 10s.")
+    ## Request APIs to extract information
+    entries = utils.request_api(args.input_url_tools, logging)
+    metrics = utils.request_api(args.input_url_metrics, logging)
 
-    # # # Request APIs to extract information
-    # tools = utils.request_api(args.input_url_tools, logging)
-    # metrics = utils.request_api(args.input_url_metrics, logging)
+    logging.info(f"%-40s\t{len(entries):,}" % ("Total entries in /tool:"))
+    logging.info(f"%-40s\t{len(metrics):,}" % ("Total metrics in /metrics:"))
+    
+    entries_ultimate, number_tools = get_ultimate_entries_and_len_tools(entries)
+    logging.info(f"%-40s\t{len(entries_ultimate):,}" % ("Total Entries Ultimate in /tool:"))
+    logging.info(f"%-40s\t{number_tools:,}" % ("Number of tools:"))
 
     logging.info("Extracting entries from APIs. ESTIMATED TIME: 12s.")
+    ## Get for each website unique the corresponding metrics
+    metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, entries)
 
-    # Get for each website unique the corresponding metrics
-    # metrics_unique_homepage = match_entries_tools_metrics_by_unique_homepage(metrics, tools)
+    # metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
 
-    metrics_unique_homepage = utils.open_json("metrics_unique_homepage.json")
-
-    # utils.write_json_file("metrics_unique_homepage.json", metrics_unique_homepage)
-
-    logging.info(f"Unique websites: {len(metrics_unique_homepage)}")
+    utils.write_json_file("metrics_unique_homepage.json", metrics_unique_homepage)
+    logging.info(f"%-40s\t{len(metrics_unique_homepage):,}" % ("Unique websites:"))
 
     # Instance the object to calculate the differents metrics:
     api_extractor_obj = api_extractors.MetricsExtractor(metrics_unique_homepage,
@@ -110,7 +125,6 @@ def main():
     # Access Tab dataframe:
     df_tab_access = utils.create_dataframe_access(api_extractor_obj)
 
-
     df_final = df_tab_access.to_dict(orient="records")
 
     # Instance of the JSON writer object
@@ -123,7 +137,21 @@ def main():
                                     df_acces = df_final,
                                     dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP_Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
                                     dict_uptimes_days = dict(collections.Counter(df_tab_access['Days_Up'].dropna().astype(int).to_list())),
-                                    # total_len_tools = len(tools)
+                                    total_entries_ultimate = len(entries_ultimate),
+                                    total_len_tools = number_tools
+                                )
+
+    write_json_file_given_path(f"/home/andreu/BSC/dashboard_openebench/new_input_data/extracted_metrics",
+                                    time_of_execution = str(datetime.now()),
+                                    bioschemas_ssl_https_license = api_extractor_obj.values_bioschemas_ssl_liscense_https,
+                                    http_codes_by_classification = api_extractor_obj.values_codes,
+                                    domains_classification = CLASSIFICATION_DOMAINS,
+                                    domains_count = count_of_most_popular_domains,
+                                    df_acces = df_final,
+                                    dict_http_codes_count = change_keys_of_dictionary(dict(collections.Counter(df_tab_access['HTTP_Code'].to_list() + [code for list_codes in df_tab_access['Redirections'].dropna().to_list() for code in list_codes])), DICT_CODES_DESCRIPTION),
+                                    dict_uptimes_days = dict(collections.Counter(df_tab_access['Days_Up'].dropna().astype(int).to_list())),
+                                    total_entries_ultimate = len(entries_ultimate),
+                                    total_len_tools = number_tools
                                 )
     logging.info(f"Saved the Stadistics in {args.output_directory}/{args.output_file_name_metrics}.json")
 

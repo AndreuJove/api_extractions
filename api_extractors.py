@@ -12,7 +12,7 @@ class MetricsExtractor:
         self.websites = []
         self.domains = []
         self.procedences = []
-        ## Metrics
+        self.colors = []
         self.operationals = []
         self.uptime_30_days = []
         self.average_access_time = []
@@ -38,11 +38,12 @@ class MetricsExtractor:
         # Returns the domain from a url given.
         domain = url.lower().split("://")[-1].split("/")[0].replace("www.", "")
         if domain in [value for group in self.domain_classification.values() for value in group]:
-            for group, domains_list in self.domain_classification.items():
-                if domain in domains_list:
-                    return domain, group
+            for group, tuple_color_domains_list in self.domain_classification.items():
+                if domain in tuple_color_domains_list[1]:
+                    return domain, group, tuple_color_domains_list[0]
         else:
-            return domain, "others"
+            return domain, "others", "grey"
+
     def check_if_value_exists(self, item, path):
         # Check if the value exist inside a path and return it.
         try:
@@ -82,10 +83,11 @@ class MetricsExtractor:
         # Iterates in the array of tools and send to diferent functions the items to collect them
         for tool in self.json:
             url = tool["homepage"]
-            domain, procedence  = self.get_domain_and_procedence(url)
+            domain, procedence, color  = self.get_domain_and_procedence(url)
             self.websites.append(url)
             self.domains.append(domain)
             self.procedences.append(procedence)
+            self.colors.append(color)
             self.operationals.append(self.check_if_value_exists(tool, ['project','website','operational']))
             self.bioschemas.append(self.check_if_value_exists(tool, ['project','website','bioschemas']))
             self.ssl.append(self.check_if_value_exists(tool, ['project','website','ssl']))

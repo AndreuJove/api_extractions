@@ -67,13 +67,13 @@ GENERIC = [
 
 # Create list of dictionaries to save in json format:
 CLASSIFICATION_DOMAINS = {
-                            'university': UNIVERSITY,
-                            'institucional': INSTITUTIONAL,
-                            'lifeScience': LIFESCIENCE,
-                            'collections': COLLECTIONS,
-                            'generic': GENERIC,
-                            'others': [],
-                            'total': [],
+                            'university': ("red", UNIVERSITY),
+                            'institucional': ("yellow", INSTITUTIONAL),
+                            'lifeScience': ("orange", LIFESCIENCE),
+                            'collections': ("green", COLLECTIONS),
+                            'generic': ("blue", GENERIC),
+                            'others': ("grey", []),
+                            'total' : []
                         }
                         
 

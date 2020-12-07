@@ -58,6 +58,7 @@ def create_dataframe_access(obj):
                                 obj.ssl,
                                 obj.license,
                                 obj.https,
+                                obj.colors
                                 )),
                                 columns =['Website',
                                             "Domain",
@@ -69,7 +70,8 @@ def create_dataframe_access(obj):
                                             "Bioschemas",
                                             "SSL",
                                             "License",
-                                            "HTTPS"
+                                            "HTTPS",
+                                            "color"
                                         ]
                         )
     df = df.replace({np.nan:None})
