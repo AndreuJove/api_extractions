@@ -13,7 +13,6 @@ UNIVERSITY = [
                 'ebi.ac.uk',
                 'broadinstitute.org',
                 'csbio.sjtu.edu.cn',
-                'dna.leeds.ac.uk',
                 "bioinf.uni-leipzig.de",
                 "genome.sph.umich.edu",
                 "bibiserv.cebitec.uni-bielefeld.de"
@@ -63,8 +62,7 @@ GENERIC = [
             'gitlab.com',
             'code.google.com',
             'bitbucket.org',
-            "search.cpan.org",
-            
+            "search.cpan.org",    
         ]
 
 # Create list of dictionaries to save in json format:

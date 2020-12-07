@@ -8,25 +8,41 @@ class MetricsExtractor:
         self.json = json
         self.domain_classification = domain_classification
         self.logger = logger
+        ## Columns for dataframe
         self.websites = []
+        self.domains = []
+        self.procedences = []
+        ## Metrics
+        self.operationals = []
+        self.uptime_30_days = []
+        self.average_access_time = []
+        self.bioschemas = []
+        self.ssl = []
+        self.license = []
+        self.https = []
+        self.redirections = []
+
+        ## Atributes to be deleted
         self.total_dict_domains_counter = {}
         self.path_to_website = ['project', 'website']
         self.metrics_website = ['bioschemas', 'ssl', 'license', 'https']
         self.values_bioschemas_ssl_liscense_https = [[[0,0] for _ in range(4)] for _ in range(len(self.domain_classification))]
         self.values_codes = self.create_empty_dict_http_codes_by_classification()
-        self.operationals = []
-        self.uptime_30_days = []
-        self.average_access_time = []
-        self.redirections = []
+
+        ## Call methods to feed the attributes
         self.iterate_in_json()
         self.counter_domains_from_websites()
         self.format_values_bioschemas_ssl_license_https()
 
-    @staticmethod
-    def get_domain(url):
+    def get_domain_and_procedence(self, url):
         # Returns the domain from a url given.
-        return url.lower().split("://")[-1].split("/")[0].replace("www.", "")
-
+        domain = url.lower().split("://")[-1].split("/")[0].replace("www.", "")
+        if domain in [value for group in self.domain_classification.values() for value in group]:
+            for group, domains_list in self.domain_classification.items():
+                if domain in domains_list:
+                    return domain, group
+        else:
+            return domain, "others"
     def check_if_value_exists(self, item, path):
         # Check if the value exist inside a path and return it.
         try:
@@ -66,9 +82,15 @@ class MetricsExtractor:
         # Iterates in the array of tools and send to diferent functions the items to collect them
         for tool in self.json:
             url = tool["homepage"]
-            domain = self.get_domain(url)
+            domain, procedence  = self.get_domain_and_procedence(url)
             self.websites.append(url)
+            self.domains.append(domain)
+            self.procedences.append(procedence)
             self.operationals.append(self.check_if_value_exists(tool, ['project','website','operational']))
+            self.bioschemas.append(self.check_if_value_exists(tool, ['project','website','bioschemas']))
+            self.ssl.append(self.check_if_value_exists(tool, ['project','website','ssl']))
+            self.license.append(self.check_if_value_exists(tool, ['project','website','license']))
+            self.https.append(self.check_if_value_exists(tool, ['project','website','https']))
             self.uptime_30_days.append(self.check_if_value_exists(tool, ['project', 'website', 'last_month_access', 'uptime_days']))
             self.average_access_time.append(self.check_if_value_exists(tool, ['project', 'website', 'last_month_access', 'average_access_time']))
             self.redirections.append(self.extract_redirections(tool))
@@ -124,8 +146,7 @@ class MetricsExtractor:
 
     def counter_domains_from_websites(self):
         # Counter of domains of the list of unique URL of tools:
-        for website in self.websites:
-            domain = self.get_domain(website)
+        for domain in self.domains:
             if domain in self.total_dict_domains_counter:
                 self.total_dict_domains_counter[domain] += 1
             else:

@@ -48,16 +48,28 @@ def create_dataframe_access(obj):
     # Create dataframe from different lists:
     # Name the different columns of the dataframe:
     df =  pd.DataFrame(list(zip(obj.websites,
+                                obj.domains,
+                                obj.procedences,
                                 obj.operationals,
                                 obj.uptime_30_days,
                                 obj.average_access_time,
-                                obj.redirections
+                                obj.redirections,
+                                obj.bioschemas,
+                                obj.ssl,
+                                obj.license,
+                                obj.https,
                                 )),
                                 columns =['Website',
-                                         'HTTP_Code',
+                                            "Domain",
+                                            "Procedence",
+                                            'HTTP_Code',
                                             "Days_Up",
                                             "Access_time",
-                                            "Redirections"
+                                            "Redirections",
+                                            "Bioschemas",
+                                            "SSL",
+                                            "License",
+                                            "HTTPS"
                                         ]
                         )
     df = df.replace({np.nan:None})
